@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Prueba QR en GitHub Pages</title>
+  <title>Test QR GitHub Pages</title>
   <script src="https://unpkg.com/html5-qrcode@2.3.7/minified/html5-qrcode.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
     #reader { width: 320px; margin: 20px auto; border: 2px solid #333; }
-    #status { margin-top: 20px; font-weight: bold; }
+    #status { margin-top: 20px; font-weight: bold; color: darkred; white-space: pre-line; }
   </style>
 </head>
 <body>
-  <h1>Prueba de Cámara con QR</h1>
+  <h1>Prueba Cámara con QR</h1>
   <button id="startBtn">Iniciar Cámara</button>
   <div id="reader"></div>
   <div id="status">Esperando...</div>
@@ -21,27 +21,29 @@
     let qrScanner;
 
     document.getElementById("startBtn").addEventListener("click", () => {
+      document.getElementById("status").innerText = "🔎 Buscando cámaras...";
       Html5Qrcode.getCameras().then(cameras => {
         if (cameras && cameras.length) {
+          document.getElementById("status").innerText = "✅ Cámaras detectadas: " + cameras.map(c => c.label).join(", ");
           const cameraId = cameras[0].id;
           qrScanner = new Html5Qrcode("reader");
           qrScanner.start(
             { deviceId: { exact: cameraId } },
             { fps: 10, qrbox: 250 },
             decoded => {
-              document.getElementById("status").innerText = "✅ Detectado: " + decoded;
+              document.getElementById("status").innerText = "📸 Detectado: " + decoded;
             },
             errorMsg => {
-              console.warn("Error de lectura: ", errorMsg);
+              console.warn("Error lectura: ", errorMsg);
             }
           ).catch(err => {
-            document.getElementById("status").innerText = "❌ Error al iniciar cámara: " + err;
+            document.getElementById("status").innerText = "❌ Error al iniciar cámara:\n" + err;
           });
         } else {
           document.getElementById("status").innerText = "❌ No se detectaron cámaras";
         }
       }).catch(err => {
-        document.getElementById("status").innerText = "❌ Error al obtener cámaras: " + err;
+        document.getElementById("status").innerText = "❌ Error al obtener cámaras:\n" + err;
       });
     });
   </script>
