@@ -1,33 +1,26 @@
 <!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Prueba Cámara QR</title>
-  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-</head>
-<body>
-  <h1>Prueba de Cámara con html5-qrcode</h1>
-
-  <div id="reader" style="width:320px; border:1px solid #000"></div>
-  <div id="status">Esperando...</div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const qr = new Html5Qrcode("reader");
-      qr.start(
-        { facingMode: "environment" }, // usa cámara trasera si existe
-        { fps: 10, qrbox: 250 },
-        (decodedText) => {
-          document.getElementById("status").innerText = "QR detectado: " + decodedText;
-        }
-      ).then(() => {
-        document.getElementById("status").innerText = "✅ Cámara iniciada correctamente";
-      }).catch(err => {
-        document.getElementById("status").innerText = "❌ Error: " + err;
-        console.error("Error cámara:", err);
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test Cámara</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+  </head>
+  <body>
+    <h1>Test QR</h1>
+    <div id="reader" style="width:300px;"></div>
+    <div id="result"></div>
+    <script>
+      function onScanSuccess(decodedText) {
+        document.getElementById("result").innerText = "Código detectado: " + decodedText;
+      }
+      const html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 200 },
+        onScanSuccess
+      ).catch(err => {
+        document.getElementById("result").innerText = "Error: " + err;
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
