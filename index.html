@@ -1,26 +1,23 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Test Cámara</title>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-  </head>
-  <body>
-    <h1>Test QR</h1>
-    <div id="reader" style="width:300px;"></div>
-    <div id="result"></div>
-    <script>
-      function onScanSuccess(decodedText) {
-        document.getElementById("result").innerText = "Código detectado: " + decodedText;
+Html5Qrcode.getCameras().then(cameras => {
+  console.log("Cámaras disponibles:", cameras);
+  if (cameras && cameras.length) {
+    // usar la primera cámara
+    const cameraId = cameras[0].id;
+    const qr = new Html5Qrcode("reader");
+    qr.start(
+      { deviceId: { exact: cameraId } },
+      { fps: 10, qrbox: 250 },
+      decoded => {
+        document.getElementById("status").innerText = "Detectado: " + decoded;
       }
-      const html5QrCode = new Html5Qrcode("reader");
-      html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 200 },
-        onScanSuccess
-      ).catch(err => {
-        document.getElementById("result").innerText = "Error: " + err;
-      });
-    </script>
-  </body>
-</html>
+    ).catch(err => {
+      document.getElementById("status").innerText = "Error al iniciar con cámara específica: " + err;
+      console.error(err);
+    });
+  } else {
+    document.getElementById("status").innerText = "No se detectaron cámaras";
+  }
+}).catch(err => {
+  document.getElementById("status").innerText = "Error al obtener cámaras: " + err;
+  console.error(err);
+});
